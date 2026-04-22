@@ -1,15 +1,20 @@
-import { Text, View, StyleSheet, useWindowDimensions } from "react-native";
-import ScrollableCardStack from "@/components/scrollableCardStack";
-import { cards } from "@/data/cards";
-import ScrollableCards from "@/components/scrollableCards";
-import { useState } from "react";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming }  from 'react-native-reanimated';
 import ExpandCard from "@/components/expandCard";
-import { expandCards } from "@/data/expandCards";
 import Footer from "@/components/footer";
+import ScrollableCards from "@/components/scrollableCards";
+import { expandCards } from "@/data/expandCards";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export default function Index() {
+  const [mounted, setMounted] = useState(false);
   const { width, height } = useWindowDimensions();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(timeout);
+  }, []);
+
   const isPortrait = height > width;
   const widthMultiplier = (isPortrait) ? 1.0 : 0.8;
   const cardHeight = (isPortrait) ? height * 0.8 : height * 0.6;
@@ -76,6 +81,8 @@ export default function Index() {
     setAutoPlay(true);
   };
 
+  if (!mounted) return null;
+
   if (isPortrait) {
     return (
       <View style={styles.root}>
@@ -88,7 +95,7 @@ export default function Index() {
           paddingBottom: 0,
           paddingTop: 0,
         }]}>
-          <ScrollableCards handleExpand={handleExpand} autoPlay={autoPlay} setAutoPlay={setAutoPlay}/>
+          <ScrollableCards handleExpand={handleExpand} autoPlay={autoPlay} setAutoPlay={setAutoPlay} width={width} height={height}/>
         </View>
         <View style={styles.footer}>
           <Text style={[styles.footerText, {
@@ -106,7 +113,7 @@ export default function Index() {
         </View>
         <View style={styles.container}>
           <Animated.View style={cardStyle}>
-            <ScrollableCards handleExpand={handleExpand} autoPlay={autoPlay} setAutoPlay={setAutoPlay}/>
+            <ScrollableCards handleExpand={handleExpand} autoPlay={autoPlay} setAutoPlay={setAutoPlay} width={width} height={height}/>
           </Animated.View>
           {expandedCard && (
             <Animated.View style={[expandStyle, {
@@ -157,11 +164,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center', 
     flex: 1,
+    margin: 'auto',
   },
   footer: {
     width: '100%',
     position: 'absolute',
-    bottom: 50,
+    bottom: 10,
     height: 50,
   },
   footerText: {

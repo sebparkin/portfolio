@@ -1,26 +1,25 @@
-import { StyleSheet, View, Text } from 'react-native';
-import { useEffect, useRef, useState } from 'react';
-import Carousel from 'react-native-reanimated-carousel';
-import { ICarouselInstance } from 'react-native-reanimated-carousel';
-import * as React from "react";
-import { useWindowDimensions } from 'react-native';
-import Card from './card';
 import { cards } from '@/data/cards';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming }  from 'react-native-reanimated';
-import * as constants from '@/constants/constants';
+import * as React from "react";
+import { useEffect, useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
+import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
+import Card from './card';
 
 type ScrollableCardsProps = {
   handleExpand?: (id: number) => void;
   autoPlay: boolean;
-  setAutoPlay: (value: boolean) => void; 
+  setAutoPlay: (value: boolean) => void;
+  width: number;
+  height: number;
 }
 
-export default function ScrollableCards({handleExpand, autoPlay, setAutoPlay}: ScrollableCardsProps) {
+export default function ScrollableCards({handleExpand, autoPlay, setAutoPlay, width, height}: ScrollableCardsProps) {
   const progress = useSharedValue<number>(0);
   const carouselRef = useRef<ICarouselInstance>(null);
   const isScrolling = useRef(false);
   const autoPlayTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { width, height } = useWindowDimensions();
+  //const { width, height } = useWindowDimensions();
   const isPortrait = height > width;
 
   const widthMultiplier = (isPortrait) ? 1.0 : 0.8
@@ -90,10 +89,10 @@ export default function ScrollableCards({handleExpand, autoPlay, setAutoPlay}: S
         width={width * widthMultiplier}
         height={cardHeight}
 				style={{
-					width: width,
+					width: width * widthMultiplier,
 					height: cardHeight,
           overflow: 'visible',
-          marginLeft: width * ((1-widthMultiplier))
+          //marginLeft: width * ((1-widthMultiplier))
 				}}
         mode={"vertical-stack"}
 				modeConfig={{
